@@ -20,12 +20,13 @@ for _ in range(m):
     visited[b] = 1
     # a학생의 우선순위가 b학생보다 크거나 같은 경우에만 우선순위 재정렬 필요
     if arr[a] >= arr[b]:
+        # b학생의 우선순위를 a학생보다 높게 설정
         arr[b] = arr[a] + 1
-        
+        # 이전에 b학생에 대한 우선순위 결정이 이루어졌을 경우
         if visited[b]:
+            # b 학생보다 우선순위가 큰 학생들 순회
             for higher in compare[b]:
-                if higher != a:
-                    arr[higher] += 1
+                arr[higher] += 1
 
 for idx, val in enumerate(arr):
     arr[idx] = (val, idx)
