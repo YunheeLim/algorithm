@@ -9,12 +9,9 @@ visited = [False] * (n + 1)
 
 for _ in range(pair):
     a, b = map(int, input().split())
-    if a < b:
-        graph[a].append(b)
-        graph[b].append(a)
-    else:
-        graph[b].append(a)
-        graph[a].append(b)
+    graph[a].append(b)
+    graph[b].append(a)
+
 
 def dfs(v):
     visited[v] = True
