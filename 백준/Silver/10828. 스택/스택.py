@@ -6,16 +6,13 @@ n = int(input())
 stack = []
 cur = -1
 while n:
-    line = input().split()
-    command = line[0]
-    if len(line) > 1:
-        num = int(line[1])
+    command = input().split()
 
-    if command == "push":
-        stack.append(num)
+    if command[0] == "push":
+        stack.append(command[1])
         cur += 1
 
-    elif command == "pop":
+    elif command[0] == "pop":
         if cur == -1:
             print(-1)
         else:
@@ -23,16 +20,16 @@ while n:
             stack.pop()
             cur -= 1
 
-    elif command == "size":
+    elif command[0] == "size":
         print(cur + 1)
     
-    elif command == "empty":
+    elif command[0] == "empty":
         if cur != -1:
             print(0)
         else:
             print(1)
 
-    elif command == "top":
+    elif command[0] == "top":
         if cur != -1:
             print(stack[cur])
         else:
