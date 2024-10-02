@@ -1,2 +1,2 @@
 # algorithm
-Solving BOJ problems using Python and C++.
+Solving BOJ problems using Python and C++.
