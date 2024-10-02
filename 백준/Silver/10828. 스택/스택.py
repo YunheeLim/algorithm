@@ -1,60 +1,41 @@
 import sys
 input = sys.stdin.readline
 
-class Stack:
-    def __init__(self):
-        self.list=[]
+n = int(input())
 
-    def __len__(self):
-        return len(self.list)
+stack = []
+cur = -1
+while n:
+    line = input().split()
+    command = line[0]
+    if len(line) > 1:
+        num = int(line[1])
 
-    def push(self, X):
-        self.list.append(X)
+    if command == "push":
+        stack.append(num)
+        cur += 1
 
-    def pop(self):
-        if len(self.list) == 0:
+    elif command == "pop":
+        if cur == -1:
             print(-1)
         else:
-            print(self.list.pop(-1))
+            print(stack[cur])
+            stack.pop()
+            cur -= 1
 
-    def size(self):
-        print(len(self.list))
-
-    def empty(self):
-        if len(self.list)==0:
-            print(1)
-        else:
-            print(0)
-
-    def top(self):
-        if len(self.list)==0:
-            print(-1)
-        else:
-            print(self.list[-1])
-
-
-N =  int(input())
-stack1 = Stack()
-
-for i in range(N):
-
-    a = input().strip()
-
-    if "push" in a:
-        num = a[5:len(a)]
-        stack1.push(num)
-
-    elif a=="pop":
-        stack1.pop()
-        
-    elif a=="size":
-        stack1.size()
-
-    elif a=="empty":
-        stack1.empty()
-
-    elif a=="top":
-        stack1.top()
+    elif command == "size":
+        print(cur + 1)
     
-    else:
-        print("Error")
+    elif command == "empty":
+        if cur != -1:
+            print(0)
+        else:
+            print(1)
+
+    elif command == "top":
+        if cur != -1:
+            print(stack[cur])
+        else:
+            print(-1)
+    
+    n -= 1
