@@ -57,11 +57,15 @@ int main() {
         }
     }
 
+    int ans = 1;
+
     for (int i = 0; i < N; i++) {
-        if (idx == i && !compare(countries[i], countries[i - 1])) {
-            cout << i;
+        if (countries[idx].gold == countries[i].gold && countries[idx].silver == countries[i].silver && countries[idx].bronze == countries[i].bronze) {
+            cout << ans;
             break;
         }
+        ans++;
     }
-    
+
+    return 0; 
 }
