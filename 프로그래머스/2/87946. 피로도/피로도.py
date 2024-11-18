@@ -1,15 +1,19 @@
-from itertools import permutations
+answer = -1
+
+def dfs(k, arr, visited, cnt):
+    global answer
+    if answer < cnt:
+        answer = cnt
+    for i in range(len(arr)):
+        if(k >= arr[i][0] and not visited[i]):
+            visited[i] = True
+            dfs(k-arr[i][1], arr, visited, cnt + 1)
+            visited[i] = False # 백트래킹
+    
 
 def solution(k, dungeons):
-    answer = -1
-    for i in permutations(dungeons, len(dungeons)):
-        k_copy = k
-        result = 0
-        for j in i:
-            if (k_copy >= j[0]):
-                k_copy -= j[1]
-                result += 1
-                if (answer < result):
-                    answer = result
+    visited = [ False ] * len(dungeons)
+    
+    dfs(k, dungeons, visited, 0)
             
     return answer
