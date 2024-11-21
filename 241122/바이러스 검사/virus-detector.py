@@ -14,4 +14,4 @@ for i in c:
         remain = i % p[1] * num
         ans = max(ans, num + remain + 1)
 
-print(ans)
+print(ans * n)
