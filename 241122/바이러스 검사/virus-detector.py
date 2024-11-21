@@ -9,7 +9,7 @@ ans = 0
 
 for i in c:
     i -= p[0]
-    if i:
+    if i > 0:
         num = i // p[1]
         remain = i % p[1]
         if remain:
