@@ -1,11 +1,9 @@
-from collections import deque
-
 n, m = map(int, input().split())
 arr = [list(map(int, input().split())) for _ in range(n)]
 moves = [list(map(int, input().split())) for _ in range(m)]
 
 # 초기 구름 위치 설정
-clouds = deque([(n - 2, 0), (n - 2, 1), (n - 1, 0), (n - 1, 1)])
+clouds = [(n - 2, 0), (n - 2, 1), (n - 1, 0), (n - 1, 1)]
 
 # 이동 방향
 dx = [0, -1, -1, -1, 0, 1, 1, 1]
@@ -24,7 +22,7 @@ def copy(x, y):
 
 # 새로운 구름 생성
 def newCloud(visited):
-    new_clouds = deque()
+    new_clouds = []
     for i in range(n):
         for j in range(n):
             if arr[i][j] >= 2 and not visited[i][j]:
@@ -39,17 +37,16 @@ for move in moves:
     visited = [[False] * n for _ in range(n)]
 
     # 구름 이동 및 물 증가
-    for _ in range(len(clouds)):
-        x, y = clouds.popleft()
+    for i in range(len(clouds)):
+        x, y = clouds[i]
         nx = (x + dx[d] * s) % n  # 경계 처리
         ny = (y + dy[d] * s) % n
+        clouds[i] = (nx, ny)  # 갱신
         arr[nx][ny] += 1
         visited[nx][ny] = True
-        clouds.append((nx, ny))
 
     # 물복사
-    while clouds:
-        x, y = clouds.popleft()
+    for x, y in clouds:
         copy(x, y)
 
     # 새 구름 생성
