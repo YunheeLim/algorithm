@@ -15,6 +15,8 @@ def solution(info, edges):
                 else:
                     dfs(sheeps + 1, wolves)
                 visited[c] = False
+                
     visited[0] = True
     dfs(1, 0)
+        
     return max(answer)
