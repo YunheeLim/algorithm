@@ -27,9 +27,6 @@ for _ in range(f):
     # floor_map[r][c] = 1
 
 
-# for k, v in anomaly.items():
-#     print(k, v)
-
 # 시간의 벽 전개
 flat_map = [[-1] * 3 * m for _ in range(3 * m)]
 # 동 = 왼쪽으로 90도 회전
@@ -132,6 +129,22 @@ def bfs(x, y):
             nx = x + dx[i]
             ny = y + dy[i]
             if 0 <= nx < 3 * m and 0 <= ny < 3 * m:
+                # 이상현상 이동
+                turn = time[x][y] + 1
+                for v in anomaly:
+                    if (turn % v == 0):
+                        if turn not in visited_turn:
+                            # print('turn', turn)
+                            visited_turn.add(turn)
+                            for idx, val in enumerate(anomaly[v]):
+                                r, c, d = val
+                                floor_map[r][c] = 1
+                                nr = r + dx[d]
+                                nc = c + dy[d]
+                                if 0 <= nr < n and 0 <= nc < n and floor_map[nr][nc] == 0: # 이상현상 이동
+                                    floor_map[nr][nc] = 1
+                                # print(nr, nc, floor_map[nr][nc])
+                                anomaly[v][idx] = [nr, nc, d]
 
                 if time[nx][ny] > time[x][y] + 1:
                     if flat_map[nx][ny] == 0:
