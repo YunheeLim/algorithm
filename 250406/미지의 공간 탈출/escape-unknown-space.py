@@ -84,6 +84,7 @@ def check_side(x, y):
 # 동 서 남 북
 dx = [0, 0, 1, -1]
 dy = [1, -1, 0, 0]
+# 이상현상 이동한 turn 기록
 visited_turn = set()
 
 # 옆면 이동 함수
@@ -130,9 +131,11 @@ def bfs(x, y):
             nx = x + dx[i]
             ny = y + dy[i]
             if 0 <= nx < 3 * m and 0 <= ny < 3 * m:
+                # 이상현상 이동
                 turn = time[x][y] + 1
                 for v in anomaly:
                     if (turn % v == 0):
+                        # 이상현상 이동이 해당 turn에 단 한 번만 이동하도록
                         if turn not in visited_turn:
                             visited_turn.add(turn)
                             for idx, val in enumerate(anomaly[v]):
@@ -140,15 +143,18 @@ def bfs(x, y):
                                 floor_map[r][c] = 1
                                 nr = r + dx[d]
                                 nc = c + dy[d]
-                                if 0 <= nr < n and 0 <= nc < n and floor_map[nr][nc] == 0: # 이상현상 이동
+                                # 벽이 아니면 이상현상 이동
+                                if 0 <= nr < n and 0 <= nc < n and floor_map[nr][nc] == 0:
                                     floor_map[nr][nc] = 1
-                                    anomaly[v][idx] = [nr, nc, d]
+                                    anomaly[v][idx] = [nr, nc, d] # 이상현상 위치 갱신
 
+                # 최단 시간 보장
                 if time[nx][ny] > time[x][y] + 1:
+                    # 면 안에서의 이동
                     if flat_map[nx][ny] == 0:
                         time[nx][ny] = time[x][y] + 1
                         q.append((nx, ny))
-
+                    # 면을 넘어갈 때
                     elif flat_map[nx][ny] == -1: # 옆면 이동
                         nx, ny = move_side(x, y)
                         
@@ -156,13 +162,14 @@ def bfs(x, y):
                             if time[nx][ny] > time[x][y] + 1:
                                 time[nx][ny] = time[x][y] + 1
                                 q.append((nx, ny))
-
+# 시간의 벽 내 시간 기록
 time = [[int(1e9)] * 3 * m for _ in range(3 * m)] 
 bfs(current[0], current[1])
 
+# 바닥면 내 시간 기록
 time_floor = [[int(1e9)] * n for _ in range(n)]
 
-# 시간의벽에서 바닥 간 통로 찾기
+# 시간의 벽에서 바닥으로 이동할 수 있는 통로 찾기
 path = ()
 ith = -1
 jth = -1
@@ -172,7 +179,6 @@ for i in range(top_left[0] - 1, top_left[0] + m + 1):
         jth += 1
         if floor_map[i][j] == 0:
             path = (i, j)
-            # 틀리면 동쪽 말고도 나머지 잘 되는지 확인 필요
             if j == top_left[1] + m: # 동
                 time_floor[i][j] = time[m + ith - 1][3 * m - 1] + 1
             elif j == top_left[1] - 1: # 서
@@ -185,6 +191,7 @@ for i in range(top_left[0] - 1, top_left[0] + m + 1):
 
 ans = -1
 
+# 바닥면에서의 bfs
 def bfs2(x, y):
     global ans
     # 엣지케이스: 탈출구가 연결 통로인 경우
@@ -202,18 +209,18 @@ def bfs2(x, y):
                     time_floor[nx][ny] = time_floor[x][y] + 1
                     ans = time_floor[nx][ny]
                     return
-                # 이상현상이 바닥에서 시간벽으로 이동할 경우 고려 필요!!
+                # 이상현상 이동
                 turn = time_floor[x][y] + 1
                 for v in anomaly:
                     if (turn % v == 0):
-                        for idx, val in enumerate(anomaly[v]):
-                            r, c, d = val
-                            if turn not in visited_turn:
-                                visited_turn.add(turn)
+                        if turn not in visited_turn:
+                            visited_turn.add(turn)
+                            for idx, val in enumerate(anomaly[v]):
+                                r, c, d = val
                                 floor_map[r][c] = 1
                                 nr = r + dx[d]
                                 nc = c + dy[d]
-                                if 0 <= nr < n and 0 <= nc < n and floor_map[nr][nc] == 0: # 이상현상 이동
+                                if 0 <= nr < n and 0 <= nc < n and floor_map[nr][nc] == 0:
                                     floor_map[nr][nc] = 1
                                     anomaly[v][idx] = [nr, nc, d]               
 
