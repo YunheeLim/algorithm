@@ -24,6 +24,7 @@ anomaly = defaultdict(list)
 for _ in range(f):
     r, c, d, v = map(int, input().split())
     anomaly[v].append([r, c, d])
+    floor_map[r][c] = 1
 
 
 # for k, v in anomaly.items():
@@ -148,10 +149,10 @@ def bfs(x, y):
 time = [[int(1e9)] * 3 * m for _ in range(3 * m)] 
 bfs(current[0][0], current[0][1])
 
-# for row in time:
-#     for j in row:
-#         print(f"{j:<10}", end="\t")
-#     print()
+for row in time:
+    for j in row:
+        print(f"{j:<10}", end="\t")
+    print()
 
 # print('top_left: ', top_left)
 
