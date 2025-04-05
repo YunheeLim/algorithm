@@ -144,7 +144,7 @@ def bfs(x, y):
                                 if 0 <= nr < n and 0 <= nc < n and floor_map[nr][nc] == 0: # 이상현상 이동
                                     floor_map[nr][nc] = 1
                                 # print(nr, nc, floor_map[nr][nc])
-                                anomaly[v][idx] = [nr, nc, d]
+                                # anomaly[v][idx] = [nr, nc, d]
 
                 if time[nx][ny] > time[x][y] + 1:
                     if flat_map[nx][ny] == 0:
