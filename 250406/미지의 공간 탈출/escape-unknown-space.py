@@ -1,34 +1,33 @@
 from collections import deque, defaultdict
 
 n, m, f = map(int, input().split())
-floor_map = []
-top_left = () # 시간의벽 윗면 시작점 위치
-current = [] # 타임머신 초기 위치
+floor_map = [] # 바닥면(2차원)
+top_left = () # 시간의 벽 윗면 시작점 위치
+current = () # 타임머신 초기 위치
+# 바닥면 저장
 for i in range(n):
     row = list(map(int, input().split()))
     floor_map.append(row)
     for j in range(len(row)):
+        # 바닥에서 시간의 벽이 시작하는 위치 저장
         if len(top_left) == 0 and row[j] == 3:
             top_left = (i, j)
 
-time_map = []
-side = []
+time_map = [] # 시간의 벽(3차원)
+side = [] # 동 서 남 북 위
+
 for i in range(1, 5 * m + 1):
     side.append(list(map(int, input().split())))
-    # 한 면 완료
+    # 한 면 완성되면 시간의벽 에 저장
     if i % m == 0:
         time_map.append(side)
         side = []
 
-anomaly = defaultdict(list)
+anomaly = defaultdict(list) # 이상현상 해시맵
 for _ in range(f):
     r, c, d, v = map(int, input().split())
-    anomaly[v].append([r, c, d])
-    # floor_map[r][c] = 1
-
-
-# for k, v in anomaly.items():
-#     print(k, v)
+    # v를 key, 나머지를 value로 갖도록 해시맵에 저장
+    anomaly[v].append([r, c, d]) # v에 대해 여러 이상현상이 있을 수 있으므로 list 사용
 
 # 시간의 벽 전개
 flat_map = [[-1] * 3 * m for _ in range(3 * m)]
@@ -41,7 +40,7 @@ for i in range(m, 2 * m):
     for j in range(2 * m, 3 * m):
         flat_map[i][j] = tmp[i - m][j - 2 * m]
 
-# 서 = 오른쪽으로 90도
+# 서 = 오른쪽으로 90도 회전
 tmp = [[0] * m for _ in range(m)]
 for i in range(m):
     for j in range(m):
@@ -50,7 +49,7 @@ for i in range(m, 2 * m):
     for j in range(0, m):
         flat_map[i][j] = tmp[i - m][j]
 
-# 남
+# 남 = 그대로
 for i in range(2 * m, 3 * m):
     for j in range(m, 2 * m):
         flat_map[i][j] = time_map[2][i - 2 * m][j - m]
@@ -69,12 +68,9 @@ for i in range(m, 2 * m):
     for j in range(m, 2 * m):
         flat_map[i][j] = time_map[4][i - m][j - m]
         if flat_map[i][j] == 2: # 타임머신 초기 위치 저장
-            current.append((i, j))
+            current = (i, j)
 
-# for e in flat_map:
-#     print(e)
-
-# 동서남북 중 어느 면에 있는지 확인
+# 동서남북 중 어느 면에 있는지 확인하는 함수
 def check_side(x, y):
     if m <= x < 2 * m and 2 * m <= y < 3 * m: # 동
         return 0
@@ -85,6 +81,7 @@ def check_side(x, y):
     elif 0 <= x < m and m <= y < 2 * m: # 북
         return 3
 
+# 동 서 남 북
 dx = [0, 0, 1, -1]
 dy = [1, -1, 0, 0]
 visited_turn = set()
@@ -123,6 +120,7 @@ def move_side(x, y):
 
     return (nx, ny)
 
+# 시간의 벽에서의 bfs
 def bfs(x, y):
     time[x][y] = 0
     q = deque([(x, y)])
@@ -160,14 +158,7 @@ def bfs(x, y):
                                 q.append((nx, ny))
 
 time = [[int(1e9)] * 3 * m for _ in range(3 * m)] 
-bfs(current[0][0], current[0][1])
-
-# for row in time:
-#     for j in row:
-#         print(f"{j:<10}", end="\t")
-#     print()
-
-# print('top_left: ', top_left)
+bfs(current[0], current[1])
 
 time_floor = [[int(1e9)] * n for _ in range(n)]
 
@@ -230,11 +221,9 @@ def bfs2(x, y):
                     time_floor[nx][ny] = time_floor[x][y] + 1
                     q.append((nx, ny))
 
+# 이상현상 이동으로 바닥으로 이동할 수 없는 경우 제외
 if len(path):
     bfs2(path[0], path[1])
-# print(ans)
-# for e in time_floor:
-#     print(e)
 
+# 정답 출력
 print(ans)
-
