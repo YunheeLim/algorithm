@@ -24,7 +24,7 @@ anomaly = defaultdict(list)
 for _ in range(f):
     r, c, d, v = map(int, input().split())
     anomaly[v].append([r, c, d])
-    floor_map[r][c] = 1
+    # floor_map[r][c] = 1
 
 
 # for k, v in anomaly.items():
