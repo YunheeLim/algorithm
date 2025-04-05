@@ -149,10 +149,10 @@ def bfs(x, y):
 time = [[int(1e9)] * 3 * m for _ in range(3 * m)] 
 bfs(current[0][0], current[0][1])
 
-for row in time:
-    for j in row:
-        print(f"{j:<10}", end="\t")
-    print()
+# for row in time:
+#     for j in row:
+#         print(f"{j:<10}", end="\t")
+#     print()
 
 # print('top_left: ', top_left)
 
