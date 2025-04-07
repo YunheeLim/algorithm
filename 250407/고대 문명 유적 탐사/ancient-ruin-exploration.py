@@ -162,6 +162,7 @@ while turn < k and flag:
     answer += removed
 
     start_points = find_start_points(selected_arr)
+    start_points.sort(key=lambda x: (x[1], -x[0]))
     # print('===시작지점들===')
     # for x, y in start_points:
     #     print(x, y)
@@ -185,6 +186,7 @@ while turn < k and flag:
             break
         answer += max_value
         start_points = find_start_points(selected_arr)
+        start_points.sort(key=lambda x: (x[1], -x[0]))
         # print("===removed(연쇄)===")
         # for e in selected_arr:
         #     print(e)
@@ -194,10 +196,10 @@ while turn < k and flag:
         for start_x, start_y in start_points:
             wall_idx = fill(selected_arr, start_x, start_y, wall_idx) # 다 채우고 다음 진행을 위해 벽면 인덱스 갱신
         
-            # print("===filled(연쇄)===")
-            # for e in selected_arr:
-            #     print(e)
-            # print("======")
+        # print("===filled(연쇄)===")
+        # for e in selected_arr:
+        #     print(e)
+        # print("======")
     # ==== 유물 연쇄 획득 끝====
     print(answer, end=" ")
     # 다음 진행을 위해 arr 갱신
