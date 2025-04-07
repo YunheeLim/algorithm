@@ -36,6 +36,7 @@ def dfs(grid, x, y, visited, path):
 def get_max_val(grid):
     max_val = 0
     visited = [[False] * 5 for _ in range(5)]
+    total_route = [] # 모든 사라진 조각의 위치 저장
     for i in range(5):
         for j in range(5):
             if not visited[i][j]:
@@ -44,59 +45,64 @@ def get_max_val(grid):
                 val = dfs(grid, i, j, visited, path)
                 if val >= 3: # 유물 완성
                     max_val += val
+                    total_route.extend(path)
                     # 유물 삭제
                     for x, y in path:
                         grid[x][y] = -1
-    return max_val
+    return max_val, total_route
 
-# 벽면의 숫자가 채워지기 시작하는 지점 찾는 함수 (한 덩어리에 대해서만)
-def find_start(grid, x, y, visited, sx, sy):
-    visited[x][y] = True
-    for i in range(4):
-        nx = x + dx[i]
-        ny = y + dy[i]
-        if 0 <= nx < 5 and 0 <= ny < 5:
-            if grid[nx][ny] == grid[x][y] and not visited[nx][ny]:
-                sx, sy = find_start(grid, nx, ny, visited, sx, sy)
-    return (x, y) if (y < sy or (y == sy and x > sx)) else (sx, sy)
+# # 벽면의 숫자가 채워지기 시작하는 지점 찾는 함수 (한 덩어리에 대해서만)
+# def find_start(grid, x, y, visited, sx, sy):
+#     visited[x][y] = True
+#     for i in range(4):
+#         nx = x + dx[i]
+#         ny = y + dy[i]
+#         if 0 <= nx < 5 and 0 <= ny < 5:
+#             if grid[nx][ny] == grid[x][y] and not visited[nx][ny]:
+#                 sx, sy = find_start(grid, nx, ny, visited, sx, sy)
+#     return (x, y) if (y < sy or (y == sy and x > sx)) else (sx, sy)
 
-# 벽면의 숫자가 채워지기 시작하는 지점들 찾는 함수 (여러 덩어리에 대해서)
-def find_start_points(grid):
-    start_points = []
-    visited2 = [[False] * 5 for _ in range(5)]
-    for i in range(5):
-        for j in range(5):
-            # 사라진 덩어리가 여러개 있을 수 있기 때문에 시작지점들 배열로 저장
-            if grid[i][j] == -1 and not visited2[i][j]:
-                start_x, start_y = find_start(grid, i, j, visited2, 4, 4)
-                start_points.append((start_x, start_y))
-    # 열이 가장 작고 행이 가장 큰 곳 순으로 정렬
-    start_points.sort(key=lambda x: (-x[0], x[1]))
-    return start_points
+# # 벽면의 숫자가 채워지기 시작하는 지점들 찾는 함수 (여러 덩어리에 대해서)
+# def find_start_points(grid):
+#     start_points = []
+#     visited2 = [[False] * 5 for _ in range(5)]
+#     for i in range(5):
+#         for j in range(5):
+#             # 사라진 덩어리가 여러개 있을 수 있기 때문에 시작지점들 배열로 저장
+#             if grid[i][j] == -1 and not visited2[i][j]:
+#                 start_x, start_y = find_start(grid, i, j, visited2, 4, 4)
+#                 start_points.append((start_x, start_y))
+#     # 열이 가장 작고 행이 가장 큰 곳 순으로 정렬
+#     start_points.sort(key=lambda x: (-x[0], x[1]))
+#     return start_points
 
-# 그룹별 벽면의 숫자 채우기(아래 -> 위, 왼 -> 오 순서)
-def fill(grid, x, y, idx):
+# 유물 사라진 곳 숫자 채우기(아래 -> 위, 왼 -> 오 순서)
+def fill(grid, route, idx):
+    route.sort(key=lambda x: (x[1], -x[0]))
+    for i, j in route:
+        grid[i][j] = nums[idx]
+        idx += 1
     # 두 덩어리가 합쳐졌고, 이미 한 덩어리는 탐색한 경우
-    if grid[x][y] > 0:
-        return idx
+    # if grid[x][y] > 0:
+    #     return idx
     
-    # -2로 그룹 넘버링
-    q = deque([(x, y)])
-    grid[x][y] = -2
-    while q:
-        cx, cy = q.popleft()
-        for i in range(4):
-            nx = cx + dx[i]
-            ny = cy + dy[i]
-            if 0 <= nx < 5 and 0 <= ny < 5 and grid[nx][ny] == -1:
-                grid[nx][ny] = -2
-                q.append((nx, ny))
+    # # -2로 그룹 넘버링
+    # q = deque([(x, y)])
+    # grid[x][y] = -2
+    # while q:
+    #     cx, cy = q.popleft()
+    #     for i in range(4):
+    #         nx = cx + dx[i]
+    #         ny = cy + dy[i]
+    #         if 0 <= nx < 5 and 0 <= ny < 5 and grid[nx][ny] == -1:
+    #             grid[nx][ny] = -2
+    #             q.append((nx, ny))
     
-    for j in range(y, 5):
-        for i in range(4, -1, -1):  
-            if grid[i][j] == -2:
-                grid[i][j] = nums[idx]
-                idx += 1
+    # for j in range(y, 5):
+    #     for i in range(4, -1, -1):  
+    #         if grid[i][j] == -2:
+    #             grid[i][j] = nums[idx]
+    #             idx += 1
 
     return idx
 
@@ -136,9 +142,9 @@ while turn < k and flag:
                 # for v in copy_arr:
                 #     print(v)
                 # print('유물 가치', get_max_val(copy_arr))
-                get_max_value = get_max_val(copy_arr)
+                get_max_value, total_route = get_max_val(copy_arr)
                 if get_max_value >= max_value:
-                    candidate.append([get_max_value, copy_arr, degree, c, r])
+                    candidate.append([get_max_value, copy_arr, degree, c, r, total_route])
 
 
     candidate.sort(key=lambda x: (-x[0], x[2], x[3], x[4]))
@@ -159,18 +165,17 @@ while turn < k and flag:
 
     # ==== 유물 1차 획득 시작 ====
     removed = candidate[0][0] # 사라진 조각 개수
+    total_route = candidate[0][5] # 사라진 조각들의 좌표
     answer += removed
 
-    start_points = find_start_points(selected_arr)
-    start_points.sort(key=lambda x: (x[1], -x[0]))
+    # start_points = find_start_points(selected_arr)
+    # start_points.sort(key=lambda x: (x[1], -x[0]))
     # print('===시작지점들===')
     # for x, y in start_points:
     #     print(x, y)
     # print('======')
 
-    # 삭제될때는 두 그룹이었지만 이후 하나로 합쳐질 가능성!!!
-    for start_x, start_y in start_points:
-        wall_idx = fill(selected_arr, start_x, start_y, wall_idx) # 다 채우고 다음 진행을 위해 벽면 인덱스 갱신
+    wall_idx = fill(selected_arr, total_route, wall_idx) # 다 채우고 다음 진행을 위해 벽면 인덱스 갱신
 
     # print("===filled(1차)===")
     # for e in selected_arr:
@@ -180,21 +185,20 @@ while turn < k and flag:
     # ==== 유물 연쇄 획득 시작====
     flag2 = True
     while flag2:
-        max_value = get_max_val(selected_arr)
+        max_value, total_route = get_max_val(selected_arr)
         if max_value < 3:
             flag2 = False
             break
         answer += max_value
-        start_points = find_start_points(selected_arr)
-        start_points.sort(key=lambda x: (x[1], -x[0]))
+        # start_points = find_start_points(selected_arr)
+        # start_points.sort(key=lambda x: (x[1], -x[0]))
         # print("===removed(연쇄)===")
         # for e in selected_arr:
         #     print(e)
         # print("======")
         # print(start_points)
 
-        for start_x, start_y in start_points:
-            wall_idx = fill(selected_arr, start_x, start_y, wall_idx) # 다 채우고 다음 진행을 위해 벽면 인덱스 갱신
+        wall_idx = fill(selected_arr, total_route, wall_idx) # 다 채우고 다음 진행을 위해 벽면 인덱스 갱신
         
         # print("===filled(연쇄)===")
         # for e in selected_arr:
