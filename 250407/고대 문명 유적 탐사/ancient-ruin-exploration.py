@@ -74,8 +74,12 @@ def find_start_points(grid):
     start_points.sort(key=lambda x: (-x[0], x[1]))
     return start_points
 
-# 벽면의 숫자 채우기(아래 -> 위, 왼 -> 오 순서)
+# 그룹별 벽면의 숫자 채우기(아래 -> 위, 왼 -> 오 순서)
 def fill(grid, x, y, idx):
+    # 두 덩어리가 합쳐졌고, 이미 한 덩어리는 탐색한 경우
+    if grid[x][y] > 0:
+        return idx
+    
     # -2로 그룹 넘버링
     q = deque([(x, y)])
     grid[x][y] = -2
@@ -143,6 +147,9 @@ while turn < k and flag:
         flag = False
         break
     selected_arr = candidate[0][1] # 유물가치가 최대가 되도록 회전한 배열
+    # print(candidate[0])
+    # if turn == 3:
+    #     break
     #선택된 배열 확인
     # print("===selected===")
     # for e in selected_arr:
@@ -155,12 +162,12 @@ while turn < k and flag:
     answer += removed
 
     start_points = find_start_points(selected_arr)
-
     # print('===시작지점들===')
     # for x, y in start_points:
     #     print(x, y)
     # print('======')
 
+    # 삭제될때는 두 그룹이었지만 이후 하나로 합쳐질 가능성!!!
     for start_x, start_y in start_points:
         wall_idx = fill(selected_arr, start_x, start_y, wall_idx) # 다 채우고 다음 진행을 위해 벽면 인덱스 갱신
 
@@ -168,7 +175,6 @@ while turn < k and flag:
     # for e in selected_arr:
     #     print(e)
     # print("======")
-    # print("wall idx:", wall_idx)
     # ==== 유물 1차 획득 끝====
     # ==== 유물 연쇄 획득 시작====
     flag2 = True
@@ -197,6 +203,8 @@ while turn < k and flag:
     # 다음 진행을 위해 arr 갱신
     arr = [row[:] for row in selected_arr]
     turn += 1
+    # print("wall idx:", wall_idx)
+
     # print('==턴 마지막 결과==')
     # for e in arr:
     #     print(e)
