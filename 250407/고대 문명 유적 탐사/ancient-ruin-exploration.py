@@ -52,15 +52,28 @@ def get_max_val(grid):
     return max_val
 
 # 벽면의 숫자가 채워지기 시작하는 지점 찾는 함수 (한 덩어리에 대해서만)
-def find_start(grid, x, y, visited, sx, sy):
+def find_start(grid, x, y, visited):
+    q = deque()
+    q.append((x, y))
     visited[x][y] = True
-    for i in range(4):
-        nx = x + dx[i]
-        ny = y + dy[i]
-        if 0 <= nx < 5 and 0 <= ny < 5:
-            if grid[nx][ny] == grid[x][y] and not visited[nx][ny]:
-                sx, sy = find_start(grid, nx, ny, visited, sx, sy)
-    return (sx, sy) if sx >= x and sy <= y else (x, y)
+    min_x, min_y = x, y  # 시작 지점 초기화
+
+    while q:
+        cx, cy = q.popleft()
+
+        # 좌상단 우선 기준 갱신
+        if cy < min_y or (cy == min_y and cx > min_x):
+            min_x, min_y = cx, cy
+
+        for i in range(4):
+            nx = cx + dx[i]
+            ny = cy + dy[i]
+            if 0 <= nx < 5 and 0 <= ny < 5:
+                if grid[nx][ny] == grid[cx][cy] and not visited[nx][ny]:
+                    visited[nx][ny] = True
+                    q.append((nx, ny))
+
+    return (min_x, min_y)
 
 # 벽면의 숫자가 채워지기 시작하는 지점들 찾는 함수 (여러 덩어리에 대해서)
 def find_start_points(grid):
@@ -70,8 +83,7 @@ def find_start_points(grid):
         for j in range(5):
             # 사라진 덩어리가 여러개 있을 수 있기 때문에 시작지점들 배열로 저장
             if selected_arr[i][j] == -1 and not visited2[i][j]:
-                start_x, start_y = 0, 0
-                start_x, start_y = find_start(selected_arr, i, j, visited2, 0, 0)
+                start_x, start_y = find_start(selected_arr, i, j, visited2)
                 start_points.append((start_x, start_y))
     # 열이 가장 작고 행이 가장 큰 곳 순으로 정렬
     start_points.sort(key=lambda x: (-x[0], x[1]))
@@ -89,7 +101,8 @@ def fill(grid, x, y, idx):
             ny = y + dy[i]
             if 0 <= nx < 5 and 0 <= ny < 5 and grid[nx][ny] == -1:
                 grid[nx][ny] = nums[idx]
-                idx += 1
+                if idx < len(nums) - 1:
+                    idx += 1
                 q.append((nx, ny))
     return idx
 
@@ -136,7 +149,7 @@ while turn < k and flag:
 
     candidate.sort(key=lambda x: (-x[0], x[2], x[3], x[4]))
     # 유물가치가 3개 이상 되는 경우가 없을 경우 탐사 중단
-    if candidate[0][0] < 3 or (len(nums) - 1 - wall_idx) < candidate[0][0]:
+    if candidate[0][0] < 3:
         flag = False
         break
     selected_arr = candidate[0][1] # 유물가치가 최대가 되도록 회전한 배열
