@@ -136,15 +136,17 @@ while turn < k and flag:
 
     candidate.sort(key=lambda x: (-x[0], x[2], x[3], x[4]))
     # 유물가치가 3개 이상 되는 경우가 없을 경우 탐사 중단
-    if candidate[0][0] < 3:
+    if candidate[0][0] < 3 or (len(nums) - 1 - wall_idx) < candidate[0][0]:
         flag = False
         break
     selected_arr = candidate[0][1] # 유물가치가 최대가 되도록 회전한 배열
     #선택된 배열 확인
+    # if turn == 2:
     # print("===selected===")
     # for e in selected_arr:
     #     print(e) 
     # print("======")
+        # break
     # ==== 탐사 진행 끝 ====
 
     # ==== 유물 1차 획득 시작 ====
