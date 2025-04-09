@@ -1,23 +1,20 @@
 from collections import deque
 
 l, n, q = map(int, input().split())
-fall_info = [list(map(int, input().split())) for _ in range(l)]
-arr = [[0] * l for _ in range(l)]
-people = [[-1, -1, -1, -1, -1]]
-people_power = [0] # 각 기사들 체력
-for _ in range(n):
-    people.append(list(map(int, input().split())))
-    people_power.append(people[-1][-1])
-commands = [list(map(int, input().split())) for _ in range(q)]
-
-# 기사 번호가 벽/함정과 겹치지 않게 음수로 표시
-people_pos = [[] for _ in range(len(people) + 1)]
-for idx in range(1, len(people)):
-    r, c, h, w, k = people[idx]
+fall_info = [list(map(int, input().split())) for _ in range(l)] # 벽, 함정 배열
+arr = [[0] * l for _ in range(l)] # 기사 배열
+people_pos = [[] for _ in range(l + 1)] # 각 기사 좌표
+people_power = [0] # 각 기사 체력
+# 기사 배열에 기사 표시
+for idx in range(1, n + 1):
+    r, c, h, w, k = map(int, input().split())
     for i in range(r - 1, r - 1 + h):
         for j in range(c - 1, c - 1 + w):
             arr[i][j] = idx
             people_pos[idx].append([i, j])
+    people_power.append(k)
+commands = [list(map(int, input().split())) for _ in range(q)]
+
 
 dx = [-1, 0, 1, 0]
 dy = [0, 1, 0, -1]
@@ -76,7 +73,7 @@ def get_candidate(idx, direction):
     return candidate
 
 answer = 0
-people_damaged = [0] * len(people)
+people_damaged = [0] * len(people_pos)
 for idx, d in commands:
     # 사라진 기사일 경우 제외
     if people_power[idx] == -1:
@@ -107,7 +104,7 @@ for idx, d in commands:
         if people_power[candi] <= 0: # 사라짐
             for x, y in people_pos[candi]:
                 arr[x][y] = 0
-                people_pos[candi] = [-1, -1, -1, -1, -1]
+                people_pos[candi] = [-1, -1]
                 people_power[candi] = -1
                 people_damaged[candi] = -1
 
