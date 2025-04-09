@@ -1,8 +1,8 @@
 from collections import deque
 
 l, n, q = map(int, input().split())
-arr = [list(map(int, input().split())) for _ in range(l)]
-fall_info = [row[:] for row in arr]
+fall_info = [list(map(int, input().split())) for _ in range(l)]
+arr = [[0] * l for _ in range(l)]
 people = [[-1, -1, -1, -1, -1]]
 people_power = [0] # 각 기사들 체력
 for _ in range(n):
@@ -44,28 +44,28 @@ def get_candidate(idx, direction):
 
         if direction == 0:
             for col in cols:
-                if not in_range(rows[0] - 1, col) or arr[rows[0] - 1][col] == 2: # 벽 만남
+                if not in_range(rows[0] - 1, col) or fall_info[rows[0] - 1][col] == 2: # 벽 만남
                     return {}
                 if in_range(rows[0] - 1, col) and arr[rows[0] - 1][col] < 0: # 기사가 맞닿아 있을 때
                     candidate.add(-arr[rows[0] - 1][col])
                     q.append(-arr[rows[0] - 1][col])
         elif direction == 1: # 우
             for row in rows:
-                if not in_range(row, cols[-1] + 1) or arr[row][cols[-1] + 1] == 2: # 벽 만남
+                if not in_range(row, cols[-1] + 1) or fall_info[row][cols[-1] + 1] == 2: # 벽 만남
                     return {}
                 if in_range(row, cols[-1] + 1) and arr[row][cols[-1] + 1] < 0: # 기사가 맞닿아 있을 때
                     candidate.add(-arr[row][cols[-1] + 1])
                     q.append(-arr[row][cols[-1] + 1])
         elif direction == 2: # 하
             for col in cols:
-                if not in_range(rows[-1] + 1, col) or arr[rows[-1] + 1][col] == 2: # 벽 만남
+                if not in_range(rows[-1] + 1, col) or fall_info[rows[-1] + 1][col] == 2: # 벽 만남
                     return {}
                 if in_range(rows[-1] + 1, col) and arr[rows[-1] + 1][col] < 0: # 기사가 맞닿아 있을 때
                     candidate.add(-arr[rows[-1] + 1][col])
                     q.append(-arr[rows[-1] + 1][col])
         elif direction == 3: # 좌
             for row in rows:
-                if not in_range(row, cols[0] - 1) or arr[row][cols[0] - 1] == 2: # 벽 만남
+                if not in_range(row, cols[0] - 1) or fall_info[row][cols[0] - 1] == 2: # 벽 만남
                     return {}
                 if in_range(row, cols[0] - 1) and arr[row][cols[0] - 1] < 0: # 기사가 맞닿아 있을 때
                     candidate.add(-arr[row][cols[0] - 1])
@@ -95,23 +95,30 @@ for idx, d in commands:
         for x, y in people_pos[candi]:
             arr[x][y] = -candi
             # 데미지
-            if candi == idx: # 명령 받은 기사 제외
-                continue
             if fall_info[x][y] == 1: # 함정
-                people_power[candi] -= 1
-                people_damaged[candi] += 1
-                answer += 1
+                if candi != idx and people_power[candi] > 0: # 명령 받은 기사 제외
+                    people_damaged[candi] += 1
+                    people_power[candi] -= 1
 
     # 체력 음수인 기사 제거
     for candi in candidates:
-        if people_power[candi] < 0: # 사라짐
+        if people_power[candi] <= 0: # 사라짐
             for x, y in people_pos[candi]:
                 arr[x][y] = 0
                 people_pos[candi] = [-1, -1, -1, -1, -1]
                 people_power[candi] = -1
-                answer -= people_damaged[candi]
+                people_damaged[candi] = -1
+    
+    # print()
+    # for e in arr:
+    #     print(e)
+    # print()
+    # print(people_power)
+    # print(people_damaged)
     
     # for e in arr:
     #     print(e)
-
+for damage in people_damaged:
+    if damage != -1:
+        answer += damage
 print(answer)
