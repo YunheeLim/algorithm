@@ -91,12 +91,12 @@ for idx, d in commands:
 
     # 밀린 좌표로 자리 표시
     for candi in candidates:
-        if candi == idx: # 명령 받은 기사 제외
-            continue
         remain = people_power[candi] # 체력
         for x, y in people_pos[candi]:
             arr[x][y] = -candi
             # 데미지
+            if candi == idx: # 명령 받은 기사 제외
+                continue
             if fall_info[x][y] == 1: # 함정
                 people_power[candi] -= 1
                 people_damaged[candi] += 1
