@@ -3,7 +3,7 @@ from collections import deque
 l, n, q = map(int, input().split())
 fall_info = [list(map(int, input().split())) for _ in range(l)] # 벽, 함정 배열
 arr = [[0] * l for _ in range(l)] # 기사 배열
-people_pos = [[] for _ in range(l + 1)] # 각 기사 좌표
+people_pos = [[] for _ in range(n + 1)] # 각 기사 좌표
 people_power = [0] # 각 기사 체력
 # 기사 배열에 기사 표시
 for idx in range(1, n + 1):
@@ -13,8 +13,7 @@ for idx in range(1, n + 1):
             arr[i][j] = idx
             people_pos[idx].append([i, j])
     people_power.append(k)
-commands = [list(map(int, input().split())) for _ in range(q)]
-
+commands = [list(map(int, input().split())) for _ in range(q)] # 명령
 
 dx = [-1, 0, 1, 0]
 dy = [0, 1, 0, -1]
