@@ -16,15 +16,17 @@ for idx in range(1, len(people)):
     r, c, h, w, k = people[idx]
     for i in range(r - 1, r - 1 + h):
         for j in range(c - 1, c - 1 + w):
-            arr[i][j] = -idx
+            arr[i][j] = idx
             people_pos[idx].append([i, j])
 
 dx = [-1, 0, 1, 0]
 dy = [0, 1, 0, -1]
 
+#  체스판 내에 있는지 확인
 def in_range(x, y):
     return 0 <= x < l and 0 <= y < l
 
+# 밀릴 예정인 기사들 반환
 def get_candidate(idx, direction):
     candidate = set() # 일직선상에 있는 밀릴 기사들 후보
     candidate.add(idx) # 시작 기사는 무조건 추가
@@ -42,34 +44,34 @@ def get_candidate(idx, direction):
         cols = list(cols)
         cols.sort()
 
-        if direction == 0:
+        if direction == 0: # 상
             for col in cols:
                 if not in_range(rows[0] - 1, col) or fall_info[rows[0] - 1][col] == 2: # 벽 만남
                     return {}
-                if in_range(rows[0] - 1, col) and arr[rows[0] - 1][col] < 0: # 기사가 맞닿아 있을 때
-                    candidate.add(-arr[rows[0] - 1][col])
-                    q.append(-arr[rows[0] - 1][col])
+                if in_range(rows[0] - 1, col) and arr[rows[0] - 1][col] > 0: # 기사가 맞닿아 있을 때
+                    candidate.add(arr[rows[0] - 1][col])
+                    q.append(arr[rows[0] - 1][col])
         elif direction == 1: # 우
             for row in rows:
                 if not in_range(row, cols[-1] + 1) or fall_info[row][cols[-1] + 1] == 2: # 벽 만남
                     return {}
-                if in_range(row, cols[-1] + 1) and arr[row][cols[-1] + 1] < 0: # 기사가 맞닿아 있을 때
-                    candidate.add(-arr[row][cols[-1] + 1])
-                    q.append(-arr[row][cols[-1] + 1])
+                if in_range(row, cols[-1] + 1) and arr[row][cols[-1] + 1] > 0: # 기사가 맞닿아 있을 때
+                    candidate.add(arr[row][cols[-1] + 1])
+                    q.append(arr[row][cols[-1] + 1])
         elif direction == 2: # 하
             for col in cols:
                 if not in_range(rows[-1] + 1, col) or fall_info[rows[-1] + 1][col] == 2: # 벽 만남
                     return {}
-                if in_range(rows[-1] + 1, col) and arr[rows[-1] + 1][col] < 0: # 기사가 맞닿아 있을 때
-                    candidate.add(-arr[rows[-1] + 1][col])
-                    q.append(-arr[rows[-1] + 1][col])
+                if in_range(rows[-1] + 1, col) and arr[rows[-1] + 1][col] > 0: # 기사가 맞닿아 있을 때
+                    candidate.add(arr[rows[-1] + 1][col])
+                    q.append(arr[rows[-1] + 1][col])
         elif direction == 3: # 좌
             for row in rows:
                 if not in_range(row, cols[0] - 1) or fall_info[row][cols[0] - 1] == 2: # 벽 만남
                     return {}
-                if in_range(row, cols[0] - 1) and arr[row][cols[0] - 1] < 0: # 기사가 맞닿아 있을 때
-                    candidate.add(-arr[row][cols[0] - 1])
-                    q.append(-arr[row][cols[0] - 1])
+                if in_range(row, cols[0] - 1) and arr[row][cols[0] - 1] > 0: # 기사가 맞닿아 있을 때
+                    candidate.add(arr[row][cols[0] - 1])
+                    q.append(arr[row][cols[0] - 1])
 
     return candidate
 
@@ -93,7 +95,7 @@ for idx, d in commands:
     for candi in candidates:
         remain = people_power[candi] # 체력
         for x, y in people_pos[candi]:
-            arr[x][y] = -candi
+            arr[x][y] = candi
             # 데미지
             if fall_info[x][y] == 1: # 함정
                 if candi != idx and people_power[candi] > 0: # 명령 받은 기사 제외
@@ -108,16 +110,7 @@ for idx, d in commands:
                 people_pos[candi] = [-1, -1, -1, -1, -1]
                 people_power[candi] = -1
                 people_damaged[candi] = -1
-    
-    # print()
-    # for e in arr:
-    #     print(e)
-    # print()
-    # print(people_power)
-    # print(people_damaged)
-    
-    # for e in arr:
-    #     print(e)
+
 for damage in people_damaged:
     if damage != -1:
         answer += damage
