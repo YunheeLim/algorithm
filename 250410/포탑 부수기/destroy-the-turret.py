@@ -1,3 +1,5 @@
+from collections import deque
+
 n, m, k = map(int, input().split())
 arr = [list(map(int, input().split())) for _ in range(n)]
 
@@ -64,6 +66,29 @@ def find_victim(ax, ay):
 # 우하좌상
 dx = [0, 1, 0, -1]
 dy = [1, 0, -1, 0]
+
+def find_route_bfs(x, y, ex, ey):
+    visited = [[False] * m for _ in range(n)]
+    queue = deque()
+    queue.append((x, y, [(x, y)]))
+    visited[x][y] = True
+
+    while queue:
+        cx, cy, path = queue.popleft()
+
+        if cx == ex and cy == ey:
+            return path
+
+        for i in range(4):
+            nx = (cx + dx[i]) % n
+            ny = (cy + dy[i]) % m
+
+            if not visited[nx][ny] and arr[nx][ny] > 0:
+                visited[nx][ny] = True
+                queue.append((nx, ny, path + [(nx, ny)]))
+    
+    return []
+
 # 최단 경로 찾기
 def find_route(visited, x, y, ex, ey, path):
     global min_route, min_route_len
@@ -104,7 +129,8 @@ for turn in range(k):
     visited = [[False] * m for _ in range(n)]
     min_route = []
     min_route_len = int(1e9)
-    find_route(visited, ax, ay, vx, vy, [(ax, ay)])
+    min_route = find_route_bfs(ax, ay, vx, vy)
+    # find_route(visited, ax, ay, vx, vy, [(ax, ay)])
     # print(min_route)
     attacked = [(ax, ay)] # 공격과 관련 있는 포탑들
     # 레이저 공격
