@@ -23,6 +23,9 @@ def find_attacker():
                 if attacker_history[i] == candidate[j]:
                     row, col = candidate[j]
                     break
+            else:
+                continue
+            break
     arr[row][col] += n + m
     return row, col
 
@@ -32,7 +35,7 @@ def find_victim(ax, ay):
     row, col = 0, 0
     for j in range(m - 1, -1, -1):
         for i in range(n - 1, -1, -1):
-            if arr[i][j] != 0 and (ax != i and ay != j) and arr[i][j] >= max_bomb:
+            if arr[i][j] != 0 and not (ax == i and ay == j) and arr[i][j] >= max_bomb:
                 max_bomb = arr[i][j]
                 row, col = i, j
                 tmp.append((i, j))
@@ -41,12 +44,20 @@ def find_victim(ax, ay):
     
     if len(candidate) > 1:
         row, col = candidate[0]
-        # 공격한지 가장 오래된 포탑 선정
+        # 일부만 공격기록 가지고 있을 때
+        for candi in candidate:
+            if candi not in attacker_history:
+                return candi
+
+        # 공격한지 가장 오래된 포탑 선정: 모두 공격 기록을 가지고 있을 때
         for i in range(len(attacker_history)):
             for j in range(len(candidate)):
                 if attacker_history[i] == candidate[j]:
                     row, col = candidate[j]
                     break
+            else:
+                continue
+            break
 
     return row, col
 
@@ -77,7 +88,12 @@ for turn in range(k):
         break
     ax, ay = find_attacker()
     vx, vy = find_victim(ax, ay)
-    attacker_history.append((ax, ay)) # 공격 기록 추가
+
+    # 공격 기록 추가
+    if (ax, ay) in attacker_history:
+        attacker_history.remove((ax, ay))
+    attacker_history.append((ax, ay)) 
+
     # print(ax, ay, ",", vx, vy)
     # print("맨 처음")
     # for e in arr:
@@ -121,15 +137,15 @@ for turn in range(k):
         for i in range(8):
             nx = (vx + ddx[i])%n
             ny = (vy + ddy[i])%m
-            if arr[nx][ny] != 0 and nx != ax and ny != ay: # 공격자가 아니고, 포탑이 있을때
+            if arr[nx][ny] != 0 and not (nx == ax and ny == ay): # 공격자가 아니고, 포탑이 있을때
                 arr[nx][ny] -= arr[ax][ay] // 2
                 if arr[nx][ny] < 0:
                     arr[nx][ny] = 0
                 attacked.append((nx, ny))
-    #     print("포탑 공격")
-    #     for e in arr:
-    #         print(e)
-    #     print()
+        # print("포탑 공격")
+        # for e in arr:
+        #     print(e)
+        # print()
     # print("attacked", attacked)
     # 포탑 정비
     for i in range(n):
@@ -141,5 +157,6 @@ for turn in range(k):
     # for e in arr:
     #     print(e)
     # print()
+    # print("공격기록:", attacker_history)
           
 print(max([max(row) for row in arr]))
