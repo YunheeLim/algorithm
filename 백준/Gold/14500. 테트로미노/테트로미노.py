@@ -1,51 +1,48 @@
 n, m = map(int, input().split())
-
 arr = [list(map(int, input().split())) for _ in range(n)]
-visited = [[0] * m for _ in range(n)]
 
 dx = [-1, 1, 0, 0]
 dy = [0, 0, -1, 1]
 
-max_sum = 0
-
 def dfs(x, y, cnt, sum):
-    global max_sum
-    if cnt == 4:
-        max_sum = max(sum, max_sum)
+    global answer
+    if cnt == 3:
+        answer = max(answer, sum)
         return
-    
     for i in range(4):
         nx = x + dx[i]
         ny = y + dy[i]
-
         if 0 <= nx < n and 0 <= ny < m and not visited[nx][ny]:
-            visited[nx][ny] = 1
+            visited[nx][ny] = True
             dfs(nx, ny, cnt + 1, sum + arr[nx][ny])
-            visited[nx][ny] = 0
+            visited[nx][ny] = False # 백트래킹
 
-def check_special_shape(x, y):
-    global max_sum
-    for shape in [[(0, 1), (0, -1), (-1, 0)],  # ㅗ
-                  [(0, 1), (0, -1), (1, 0)],   # ㅜ
-                  [(1, 0), (-1, 0), (0, 1)],   # ㅏ
-                  [(1, 0), (-1, 0), (0, -1)]]: # ㅓ
-        total = arr[x][y]
-        valid = True
-        for dx, dy in shape:
-            nx, ny = x + dx, y + dy
-            if 0 <= nx < n and 0 <= ny < m:
-                total += arr[nx][ny]
-            else:
-                valid = False
-                break
-        if valid:
-            max_sum = max(max_sum, total)
+def T_shape(x, y):
+    global answer
+    sum = arr[x][y]
+    len = 1
+    for i in range(4):
+        nx = x + dx[i]
+        ny = y + dy[i]
+        if 0 <= nx < n and 0 <= ny < m:
+            sum += arr[nx][ny]
+            len += 1
+    if len == 5:
+        for i in range(4):
+            nx = x + dx[i]
+            ny = y + dy[i]
+            answer = max(answer, sum - arr[nx][ny])
+    elif len == 4:
+        answer = max(answer, sum)
+
+answer = 0
+visited = [[False] * m for _ in range(n)]
 
 for i in range(n):
     for j in range(m):
-        visited[i][j] = 1
-        dfs(i, j, 1, arr[i][j])
-        visited[i][j] = 0
-        check_special_shape(i, j)
+        visited[i][j] = True # 여기서 visited를 새로 생성하면 4중 for문으로 시간초과 뜨니까 백트래킹 처리하기!!!
+        dfs(i, j, 0, arr[i][j])
+        visited[i][j] = False
+        T_shape(i, j)
 
-print(max_sum)
+print(answer)
