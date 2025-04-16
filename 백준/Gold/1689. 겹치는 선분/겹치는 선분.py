@@ -1,19 +1,18 @@
-import sys
-input = sys.stdin.readline
-
-N = int(input().rstrip())
+n = int(input())
 arr = []
-for _ in range(N):
-    a,b = map(int,input().rstrip().split())
-    arr.append((a,1)) # 선분 시작
-    arr.append((b,-1)) # 선분 끝
+for _ in range(n):
+    s, e = map(int, input().split())
+    arr.append((s, 1))
+    arr.append((e, -1))
 
+answer = 0
 arr.sort()
-tot = 0
 cnt = 0
+for pos, event in arr:
+    if event == 1:
+        cnt += 1
+    else:
+        cnt -= 1
+    answer = max(answer, cnt)
+print(answer)
 
-for _ , point in arr:
-    cnt += point
-    tot = max(tot,cnt)
-
-print(tot)
