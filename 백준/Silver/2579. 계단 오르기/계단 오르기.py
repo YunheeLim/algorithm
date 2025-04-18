@@ -1,20 +1,22 @@
 import sys
+
 input = sys.stdin.readline
 
 n = int(input())
-arr = [int(input()) for _ in range(n)]
-arr = [0] + arr
-dp = [0] * (n + 1)
 
-# 초기화
-dp[1] = arr[1]
+# 계단의 숫자를 초기화 합니다. 1층은 1번째(not 0번째) 인덱스에 저장합니다.
+stairs = [0] * 301
+for i in range(1, n + 1):
+    stairs[i] = int(input())
 
-if n >= 2:
-    dp[2] = arr[1] + arr[2]
+# dp 배열을 초기화합니다.
+dp = [0] * 301
+dp[1] = stairs[1]
+dp[2] = stairs[1] + stairs[2]
+dp[3] = max(stairs[1] + stairs[3], stairs[2] + stairs[3])
 
-if n >= 3:
-    # DP
-    for i in range(3, n + 1):
-        dp[i] = max(arr[i] + dp[i - 2],  arr[i] + arr[i - 1] + dp[i - 3])
+# 점화식을 계산합니다.
+for i in range(4, n + 1):
+    dp[i] = max(dp[i - 3] + stairs[i - 1] + stairs[i], dp[i - 2] + stairs[i])
 
-print(dp[-1])
+print(dp[n])
