@@ -1,21 +1,21 @@
-k, n = map(int, input().split())
-arr = [int(input()) for _ in range(k)]
+import sys
+input = sys.stdin.readline
 
-start = 1
-end = max(arr)
-h = end
+k, n = map(int, input().split())
+lines = [int(input()) for _ in range(k)]
+
+start, end = 1, max(lines)
+answer = 0
 
 while start <= end:
     mid = (start + end) // 2
-    cnt = 0
-    
-    for i in arr:
-        cnt += i // mid
-
-    if cnt >= n:
-        h = mid
+    total = 0
+    for line in lines:
+        total += line // mid
+    if total >= n:
+        answer = mid
         start = mid + 1
     else:
         end = mid - 1
 
-print(h)
+print(answer)
