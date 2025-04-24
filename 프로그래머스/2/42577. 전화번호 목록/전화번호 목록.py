@@ -1,6 +1,6 @@
 def solution(phone_book):
     answer = True
-    dic = {}
+    dic = set()
     phone_book.sort()
     for phone in phone_book:
         flag = True
@@ -13,5 +13,5 @@ def solution(phone_book):
                 break
         if flag == False:
             break
-        dic[phone] = 1
+        dic.add(phone)
     return answer
