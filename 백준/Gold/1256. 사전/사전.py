@@ -12,11 +12,12 @@ else:
     answer = ""
     while True:
         if n == 0 or m == 0:
-            answer += "z" * m
             answer += "a" * n
+            answer += "z" * m
             break
-        
-        split = dp[n - 1][m]
+
+        split = dp[n - 1][m] # a 선택
+
         if k <= split:
             answer += "a"
             n -= 1
