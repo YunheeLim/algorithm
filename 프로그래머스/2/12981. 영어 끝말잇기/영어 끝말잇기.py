@@ -1,37 +1,25 @@
 def solution(n, words):
-    answer = []
-
-    current = []
-    
-    turn = 0
-    
-    if len(words[0]) > 1:
-        current.append(words[0])
+    answer = [0, 0]
+    history = set()
+    history.add(words[0]) # 맨 처음 넣고 시작
+    turn = 1
+    person = 1
+    while person < len(words):
+        print(turn, person % n)
         
-        while turn < len(words) - 1:
+        # 이어지는지
+        print("current:", words[person][0])
+        print("prev:", words[(person + (n - 1)) % n][-1])
+        if words[person][0] != words[person - 1][-1]:
+            return [person % n + 1, turn]
+        # 나왔던 단어인지
+        if words[person] in history:
+            return [person % n + 1, turn]
+        
+        history.add(words[person])
+        print(history)
+        person += 1
+        if person % n == 0: # 한 바퀴 돎
             turn += 1
-
-            if words[turn][0] != current[-1][-1]:
-                temp = (turn + 1) % n
-                if temp == 0:
-                    temp += n
-                answer.extend([temp, turn // n + 1])
-                break
-
-            if words[turn] not in current:
-                current.append(words[turn])
-                
-            else:
-                temp = (turn + 1) % n
-                if temp == 0:
-                    temp += n
-                answer.extend([temp, turn // n + 1])
-                break
-                
-    else:
-        answer.extend([1, 1])
-    
-    if not len(answer):
-        answer.extend([0, 0])
-        
+            
     return answer
