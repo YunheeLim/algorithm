@@ -8,9 +8,8 @@ B = list(map(int, input().split()))
 A.sort()
 B.sort(reverse=True)
 
-ans = 0
+answer = 0
+for i, j in zip(A, B):
+    answer += i*j
 
-for a, b in zip(A, B):
-    ans += a * b 
-
-print(ans)
+print(answer)
